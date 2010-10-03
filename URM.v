@@ -120,14 +120,25 @@ Definition DIVERGES (P:program) (l:list nat) : Prop :=
   ~ HALTS P l.
 
 
+Definition STP (P:program) (l:list nat) (t:nat): Prop :=
+  true = Final P (EXEC_STEPS t P (set_init_conf l)).
+
+
+
+
+
 (* Sample programs. Prove they halt of not. *)
 
 
-(* This halts in one instruction. Easy. *)
+(* This halts in three steps. Easy. *)
 Check ([ZR 0]).
-Example conv1 : HALTS [ZR 0] [].
-Proof.
- exists 1. trivial.
+Example conv0 : STP [ZR 0, ZR 0, ZR 0] [] 3.
+Proof. reflexivity. Qed.
+ 
+Example conv1 : HALTS [ZR 0,ZR 0,ZR 0] [].
+Proof. exists 3. reflexivity. Qed.
+
+
 
 (* Prove this can't halt by induction? *)
 Example conv2 : DIVERGES [JP 0 0 0] [].
