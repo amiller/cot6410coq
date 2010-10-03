@@ -38,10 +38,17 @@ Definition update_store (n:nat) (v:nat) (s:store) : nat->nat :=
 
 
 
-(* Next we define instruction set and the semantics of all
-the instructions. *)
+(* Next we define the instruction set and the semantics of all
+the instructions.
 
-(* This machine has four instructions. *)
+ZR n: zero the nth register
+SC n: increment the nth register
+TF n m: copy/transfer R(n) to mth register.
+JP n m x: jump to PC:x if R(n) == R(m)
+
+*)
+
+
 Inductive instruction:Type :=
   | ZR : nat -> instruction
   | SC : nat -> instruction
@@ -103,7 +110,8 @@ end.
 
 
 
-(*  *)
+(* With stepping functions and a terminal condtion defined,
+ we can define propositions for HALT and DIVERGE, etc. *)
 
 Definition HALTS (P:program) (l:list nat) : Prop :=
   exists n:nat, true = (Final P (EXEC_STEPS n P (set_init_conf l))).
@@ -112,13 +120,16 @@ Definition DIVERGES (P:program) (l:list nat) : Prop :=
   ~ HALTS P l.
 
 
+(* Sample programs. Prove they halt of not. *)
 
+
+(* This halts in one instruction. Easy. *)
 Check ([ZR 0]).
-
 Example conv1 : HALTS [ZR 0] [].
 Proof.
  exists 1. trivial.
 
+(* Prove this can't halt by induction? *)
 Example conv2 : DIVERGES [JP 0 0 0] [].
 Proof.
  unfold DIVERGES. 
